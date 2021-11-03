@@ -1,17 +1,8 @@
 """
-Snake game v2
+Snake v2.0
 """
 
-import pygame as p
-
-from pygame.constants import *
-
-from time import sleep
-
 from game import Game, GameState
-from globals import *
-from snake import Snake
-from food import Food
 
 
 def main():
@@ -19,7 +10,7 @@ def main():
     game = Game(1024, 768)
     game.running = True
     game.playing = True
-    game.game_state = GameState.PLAYING
+    game.game_state = GameState.RUNNING
 
     while game.running:
         game.game_loop()

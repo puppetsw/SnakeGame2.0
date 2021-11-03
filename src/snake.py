@@ -2,17 +2,16 @@
 Snake class which will contain information about the snake!
 """
 
+from enum import Enum
+
 import pygame.draw
 from pygame.rect import Rect
 
 from globals import *
-from enum import Enum
 
 
-class SnakeDirections(Enum):
-    """
-    Enum class for the snake directions
-    """
+class SnakeDirection(Enum):
+    """Enum class for the snake directions"""
     UP = 0
     DOWN = 1
     LEFT = 2
@@ -20,22 +19,31 @@ class SnakeDirections(Enum):
 
 
 class Snake:
-
+    """Snake player class"""
     def __init__(self, game):
         self.game = game
-        self.colour = (255, 255, 255)
+        self.colour = GREEN
         self.pos_x = 0  # set initial position # TODO Use properties to set?
         self.pos_y = 0  # set initial position # TODO Use properties to set?
         self.size = 20  # size of the snake on the screen.
-        self.speed = 6
+        self.speed = 5
         self.speed_increment = 0.1
         self.length = 1
         self.body = []  # how many body of the snake to draw.
         self.snake_head = []  # current position of the head.
         self.direction = (self.size, 0)
-        self.current_direction = 'left'
+        self.current_direction = SnakeDirection.LEFT
 
-    def update(self, delta_time, actions):
+    def update(self, delta_time: float, controls: dict[str, bool]):
+        """
+        Updates the snake position and body parts.
+        Changes direction if the user has pressed a key.
+        Direction is only changed if the new direction is not the opposite of the current direction.
+
+        Args:
+            delta_time: delta time since last update.
+            controls: controls that the user has pressed.
+        """
         snake_head = self._position_to_grid(self.pos_x, self.pos_y)
         self.snake_head = snake_head  # update position of head.
 
@@ -45,21 +53,22 @@ class Snake:
         if len(self.body) > self.length:
             del self.body[0]
 
-        if actions['left'] and self.current_direction != 'right':
+        if controls['left'] and self.current_direction != SnakeDirection.RIGHT:
             self.direction = -self.size, 0
-            self.current_direction = 'left'
-        if actions['right'] and self.current_direction != 'left':
+            self.current_direction = SnakeDirection.LEFT
+        if controls['right'] and self.current_direction != SnakeDirection.LEFT:
             self.direction = self.size, 0
-            self.current_direction = 'right'
-        if actions['up'] and self.current_direction != 'down':
+            self.current_direction = SnakeDirection.RIGHT
+        if controls['up'] and self.current_direction != SnakeDirection.DOWN:
             self.direction = 0, -self.size
-            self.current_direction = 'up'
-        if actions['down'] and self.current_direction != 'up':
+            self.current_direction = SnakeDirection.UP
+        if controls['down'] and self.current_direction != SnakeDirection.UP:
             self.direction = 0, self.size
-            self.current_direction = 'down'
+            self.current_direction = SnakeDirection.DOWN
 
         self.pos_x += self.direction[0] * self.speed * delta_time
         self.pos_y += self.direction[1] * self.speed * delta_time
+        self.game.reset_keys()  # make sure to reset the keys after each loop.
 
     def _position_to_grid(self, x, y):
         """Translates the x y coordinates to grid positions."""
@@ -78,7 +87,7 @@ class Snake:
         """Checks if the snake has eaten the food object.
 
         Args:
-            food (Food): The food object that will be checked for position.
+            food: The food object that will be checked for position.
         """
         x, y = self._position_to_grid(self.pos_x, self.pos_y)
         if x == food.pos_x and y == food.pos_y:

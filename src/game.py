@@ -6,7 +6,7 @@ import pygame
 from food import Food
 from gamestate import GameState
 from globals import *
-from menu import Menu
+from menu import Menu, TitleMenu, MenuItem
 from snake import Snake
 
 pygame.init()
@@ -36,7 +36,7 @@ class Game:
         self.font = pygame.font.Font(pygame.font.get_default_font(), 20)
         self.debug_font = pygame.font.Font(pygame.font.get_default_font(), 15)
 
-        self.title_menu = Menu(self)
+        self.title_menu = TitleMenu(self)
         self.player = Snake(self)
         self.player.colour = GREEN
         self.player.pos_x, self.player.pos_y = self.game_width // 2, self.game_height // 2
@@ -107,7 +107,7 @@ class Game:
             pass
 
         if self.game_state == GameState.QUITTING:
-            pass
+            pygame.quit()
 
         self.debug_info(self.game_canvas)
 

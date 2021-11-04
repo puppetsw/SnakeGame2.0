@@ -1,6 +1,8 @@
 """
 Main Game class
 """
+import sys
+
 import pygame
 
 from food import Food
@@ -31,15 +33,16 @@ class Game:
         self.playing = False
         self.controls = {'left': False, 'right': False, 'up': False, 'down': False, 'action': False, 'back': False}
         self.delta_time = 0
-        self.previous_time = 0
 
         self.font = pygame.font.Font(pygame.font.get_default_font(), 20)
         self.debug_font = pygame.font.Font(pygame.font.get_default_font(), 15)
 
         self.title_menu = TitleMenu(self)
+
         self.player = Snake(self)
         self.player.colour = GREEN
         self.player.pos_x, self.player.pos_y = self.game_width // 2, self.game_height // 2
+
         self.food = Food(self)
 
     def get_events(self):
@@ -108,6 +111,7 @@ class Game:
 
         if self.game_state == GameState.QUITTING:
             pygame.quit()
+            sys.exit()
 
         self.debug_info(self.game_canvas)
 
@@ -148,17 +152,17 @@ class Game:
                        font=self.debug_font, position='bottomright')
 
         for k, v in vars(self.player).items():
-            self.draw_text(surface, f'{k}:{v}', (0, 255, 255), 10, screen_pos, font=self.debug_font, position='topleft')
+            self.draw_text(surface, f'{k}:{v}', CYAN, 10, screen_pos, font=self.debug_font, position='topleft')
             screen_pos += 20
 
         self.draw_text(surface, f'GAME_STATE:{self.game_state}',
                        (0, 255, 255), self.game_width, 20, position='bottomright', font=self.debug_font)
 
-        self.draw_text(surface, 'FOOD', (0, 255, 255), 10, screen_pos, font=self.debug_font, position='topleft')
+        self.draw_text(surface, 'FOOD', CYAN, 10, screen_pos, font=self.debug_font, position='topleft')
         screen_pos += 20
 
         for k, v in vars(self.food).items():
-            self.draw_text(surface, f'{k}:{v}', (0, 255, 255), 10, screen_pos, font=self.debug_font, position='topleft')
+            self.draw_text(surface, f'{k}:{v}', CYAN, 10, screen_pos, font=self.debug_font, position='topleft')
             screen_pos += 20
 
     def game_loop(self):

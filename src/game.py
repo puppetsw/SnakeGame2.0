@@ -6,7 +6,7 @@ import pygame
 from food import Food
 from gamestate import GameState
 from globals import *
-from menu import Menu, TitleMenu, MenuItem
+from menu import TitleMenu
 from snake import Snake
 
 pygame.init()
@@ -24,7 +24,7 @@ class Game:
         self.game_canvas = pygame.Surface((self.game_width, self.game_height))  # upscale
 
         self.clock = pygame.time.Clock()
-        self.frame_rate = 60
+        self.frame_rate = 30
         self.score = 0
 
         self.running = False
@@ -120,28 +120,10 @@ class Game:
         """Get delta time by framerate"""
         self.delta_time = self.clock.tick(self.frame_rate) / 1000  # seconds
 
-    def draw_text(self, surface, text, color, x, y, position='center'):
-        text_surface = self.font.render(text, True, color)
-        text_rect = text_surface.get_rect()
-
-
-        if position == 'bottomleft':
-            text_rect.bottomleft = (x, y)
-        elif position == 'bottomright':
-            text_rect.bottomright = (x, y)
-        elif position == 'topleft':
-            text_rect.topleft = (x, y)
-        elif position == 'topright':
-            text_rect.topright = (x, y)
-        elif position == 'center':
-            text_rect.center = (x, y)
-        else:
-            text_rect.center = (x, y)
-
-        surface.blit(text_surface, text_rect)
-
-    def draw_debug_text(self, surface, text, color, x, y, position='bottomleft'):
-        text_surface = self.debug_font.render(text, True, color)
+    def draw_text(self, surface, text, color, x, y, position='center', font=None):
+        if font is None:
+            font = self.font
+        text_surface = font.render(text, True, color)
         text_rect = text_surface.get_rect()
 
         if position == 'bottomleft':
@@ -155,25 +137,28 @@ class Game:
         elif position == 'center':
             text_rect.center = (x, y)
         else:
-            text_rect.bottomleft = (x, y)
+            text_rect.center = (x, y)
 
         surface.blit(text_surface, text_rect)
 
     def debug_info(self, surface):
         """Print debug info on the screen."""
         screen_pos = 20
+        self.draw_text(surface, "FPS: " + str(int(self.clock.get_fps())), WHITE, self.game_width, self.game_height,
+                       font=self.debug_font, position='bottomright')
+
         for k, v in vars(self.player).items():
-            self.draw_debug_text(surface, f'{k}:{v}', (0, 255, 255), 10, screen_pos)
+            self.draw_text(surface, f'{k}:{v}', (0, 255, 255), 10, screen_pos, font=self.debug_font, position='topleft')
             screen_pos += 20
 
-        self.draw_debug_text(surface, f'GAME_STATE:{self.game_state}',
-                             (0, 255, 255), self.game_width, 20, position='bottomright')
+        self.draw_text(surface, f'GAME_STATE:{self.game_state}',
+                       (0, 255, 255), self.game_width, 20, position='bottomright', font=self.debug_font)
 
-        self.draw_debug_text(surface, 'FOOD', (0, 255, 255), 10, screen_pos)
+        self.draw_text(surface, 'FOOD', (0, 255, 255), 10, screen_pos, font=self.debug_font, position='topleft')
         screen_pos += 20
 
         for k, v in vars(self.food).items():
-            self.draw_debug_text(surface, f'{k}:{v}', (0, 255, 255), 10, screen_pos)
+            self.draw_text(surface, f'{k}:{v}', (0, 255, 255), 10, screen_pos, font=self.debug_font, position='topleft')
             screen_pos += 20
 
     def game_loop(self):

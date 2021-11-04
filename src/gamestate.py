@@ -11,3 +11,4 @@ class GameState(Enum):
     PAUSED = 3
     GAME_OVER = 4
     QUITTING = 5
+    OPTIONS = 6

@@ -68,13 +68,13 @@ class Game:
                 if event.key == pygame.K_SPACE or event.key == pygame.K_RETURN:
                     self.controls['action'] = True
             if event.type == pygame.KEYUP:
-                if event.key == pygame.K_LEFT:
+                if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     self.controls['left'] = False
-                if event.key == pygame.K_RIGHT:
+                if event.key == pygame.K_RIGHT or event.key == pygame.K_d:
                     self.controls['right'] = False
-                if event.key == pygame.K_UP:
+                if event.key == pygame.K_UP or event.key == pygame.K_w:
                     self.controls['up'] = False
-                if event.key == pygame.K_DOWN:
+                if event.key == pygame.K_DOWN or event.key == pygame.K_s:
                     self.controls['down'] = False
                 if event.key == pygame.K_ESCAPE:
                     self.controls['back'] = False

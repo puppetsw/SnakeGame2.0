@@ -9,7 +9,7 @@ from menu import TitleMenu
 from snake import Snake
 from snakeai import SnakeAI
 
-pygame.init()
+pygame.init()  # initialise pygame
 
 
 class Game:
@@ -18,6 +18,7 @@ class Game:
     game states and menu interactions.
     """
     def __init__(self, display_width, display_height):
+        pygame.display.set_caption(GAME_NAME)  # set the title of the window.
         self.screen = pygame.display.set_mode((display_width, display_height))
         self.display_width = display_width
         self.display_height = display_height
@@ -93,17 +94,17 @@ class Game:
         if self.game_state == GameState.PLAYING:
             self.game_canvas.fill(BLACK)  # clear the screen
 
-            self.food.draw(self.game_canvas)
+            self.food.draw(self.game_canvas)  # draw the food
 
-            self.player.update(self.delta_time, self.controls)
-            self.player.draw(self.game_canvas)
+            self.player.update(self.delta_time, self.controls)  # check player controls and update position
+            self.player.draw(self.game_canvas)  # draw the player snake.
 
             self.enemy.update(self.delta_time, None)  # pass None for controls
-            self.enemy.draw(self.game_canvas)
-            self.enemy.move_towards(self.food.pos_x, self.food.pos_y)
+            self.enemy.draw(self.game_canvas)  # draw the enemy snake.
+            self.enemy.move_towards(self.food.pos_x, self.food.pos_y)  # make the ai move towards the food.
 
-            if self.player.eat(self.food):
-                self.food.update_position()
+            if self.player.eat(self.food):  # if the player has eaten the food
+                self.food.update_position()  # set a new position for the food.
                 self.score += 10  # score increment
 
             if self.enemy.eat(self.food):
@@ -113,7 +114,7 @@ class Game:
             if self.player.is_dead():
                 self.game_state = GameState.GAME_OVER
 
-            self.display_score(str(self.score), WHITE, self.game_canvas)
+            self.draw_score(str(self.score), WHITE, self.game_canvas)
 
         if self.game_state == GameState.GAME_OVER:
             # TODO Add game over screen
@@ -123,16 +124,16 @@ class Game:
             pygame.quit()
             sys.exit()
 
-        self.debug_info(self.game_canvas)
+        self.draw_debug_info(self.game_canvas)
+
+    def update_delta_time(self):
+        """Get delta time by framerate"""
+        self.delta_time = self.clock.tick(self.frame_rate) / 1000  # seconds
 
     def draw(self):
         # Scale up the canvas to the screensize and draw it to the screen.
         self.screen.blit(pygame.transform.scale(self.game_canvas, (self.display_width, self.display_height)), (0, 0))
         pygame.display.flip()
-
-    def update_delta_time(self):
-        """Get delta time by framerate"""
-        self.delta_time = self.clock.tick(self.frame_rate) / 1000  # seconds
 
     def draw_text(self, surface, text, color, x, y, position='center', font=None):
         if font is None:
@@ -155,34 +156,58 @@ class Game:
 
         surface.blit(text_surface, text_rect)
 
-    def debug_info(self, surface):
+    def draw_debug_info(self, surface):
         """Print debug info on the screen."""
-        screen_pos = 20
         self.draw_text(surface, "FPS: " + str(int(self.clock.get_fps())), WHITE, self.game_width, self.game_height,
                        font=self.debug_font, position='bottomright')
 
-        for k, v in vars(self.player).items():
-            self.draw_text(surface, f'{k}:{v}', CYAN, 10, screen_pos, font=self.debug_font, position='topleft')
-            screen_pos += 20
+        # Draw the current GameState on screen
+        self.draw_text(surface, f'GAME_STATE:{self.game_state}', CYAN, self.game_width, 20,
+                       position='bottomright', font=self.debug_font)
 
-        self.draw_text(surface, f'GAME_STATE:{self.game_state}',
-                       (0, 255, 255), self.game_width, 20, position='bottomright', font=self.debug_font)
+        screen_pos = [20]  # set starting y position
+        # Draw the player snake object data on screen
+        player_exclude_keys = ['body', 'game']  # keys to be excluded from debug info.
+        self.draw_object_data(surface, self.player, screen_pos, CYAN, player_exclude_keys)
+        # Draw the food object data on screen
+        self.draw_object_data(surface, self.food, screen_pos, CYAN, ['game'])
+        # Draw the ai object data on screen
+        self.draw_object_data(surface, self.enemy, screen_pos, YELLOW, player_exclude_keys)
 
-        self.draw_text(surface, 'FOOD', CYAN, 10, screen_pos, font=self.debug_font, position='topleft')
-        screen_pos += 20
+    def draw_object_data(self, surface, object_, screen_position: list[int], color: tuple[int, int, int],
+                         exclude_keys: list[str]):
+        """Loop through the attributes in the _object and display them and the values on screen.
 
-        for k, v in vars(self.food).items():
-            self.draw_text(surface, f'{k}:{v}', CYAN, 10, screen_pos, font=self.debug_font, position='topleft')
-            screen_pos += 20
+        Note:
+            Pass the screen_position in a list so that the y position can be incremented and
+            updated by reference.
+
+        Args:
+            surface: the surface to draw the data on.
+            object_: the object to get the data from.
+            screen_position: the screen position to start drawing the data.
+            color: the colour of the text.
+            exclude_keys: any keys to be excluded from the data.
+        """
+        self.draw_text(surface, str(type(object_).__name__).upper(), color, 10, screen_position[0],
+                       font=self.debug_font, position='bottomleft')
+        screen_position[0] += 20  # increment the y position.
+        for k, v in vars(object_).items():
+            if k in exclude_keys:
+                continue
+            self.draw_text(surface, f'{k}:{v}', color, 10, screen_position[0],
+                           font=self.debug_font, position='bottomleft')
+            screen_position[0] += 20  # increment the y position.
+
+    def draw_score(self, text, colour, screen):
+        """Display score in bottom left corner."""
+        m = self.font.render(text, True, colour)
+        screen.blit(m, (5, self.game_height - 20))
 
     def game_loop(self):
+        """The main game loop!"""
         while self.running:
             self.update_delta_time()
             self.get_events()
             self.update()
             self.draw()
-
-    def display_score(self, text, colour, screen):
-        """Display score in bottom left corner."""
-        m = self.font.render(text, True, colour)
-        screen.blit(m, (5, self.game_height - 20))

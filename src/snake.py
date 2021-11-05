@@ -53,16 +53,15 @@ class Snake:
             delta_time: delta time since last update.
             controls: controls that the user has pressed.
         """
-        snake_head = self.x, self.y
-        self.snake_head = snake_head  # update position of head.
+        self.snake_head = self.x, self.y  # update the current position of the head.
 
-        if len(self.body) <= 0 or snake_head != self.body[-1]:
-            self.body.append(snake_head)
+        if len(self.body) <= 0 or self.snake_head != self.body[-1]:
+            self.body.append(self.snake_head)
 
         if len(self.body) > self.length:
             del self.body[0]
 
-        if controls is not None:
+        if controls is not None:  # added, so we can use the same update function with ai.
             if controls['left'] and self.current_direction != SnakeDirection.RIGHT:
                 self.direction = -self.size, 0
                 self.current_direction = SnakeDirection.LEFT

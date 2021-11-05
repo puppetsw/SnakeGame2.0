@@ -22,22 +22,22 @@ class SnakeAI(Snake):
         self.direction = 0, self.size
         self.current_direction = SnakeDirection.DOWN
 
-    def move_towards(self, dx: float, dy: float):
+    def move_towards(self, food_x: float, food_y: float):
         """Tells the snake to move towards a given position.
 
         Args:
-            dx: The x-coordinate of the target.
-            dy: The y-coordinate of the target.
+            food_x: The x-coordinate of the target.
+            food_y: The y-coordinate of the target.
         """
-        if self.x > dx:
+        if self.x > food_x:
             self.move_left()
 
-        if self.x < dx:
+        if self.x < food_x:
             self.move_right()
 
-        if self.x == dx:
-            if self.y < dy:
+        if self.x == food_x:
+            if self.y < food_y:
                 self.move_down()
 
-            if self.y > dy:
+            if self.y > food_y:
                 self.move_up()

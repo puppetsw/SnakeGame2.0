@@ -1,7 +1,3 @@
-"""
-Food class for handling the generation of food.
-"""
-
 import random
 
 import pygame.draw
@@ -9,6 +5,7 @@ from pygame import Rect
 
 
 class Food:
+    """Handles the food positioning and colour."""
 
     def __init__(self, game):
         self.game = game
@@ -18,8 +15,8 @@ class Food:
         self.pos_y = 0
         self.update_position()
 
-    def update(self, controls):
-        pass
+    # def update(self, controls):
+    #     pass
 
     def draw(self, screen):
         """Draws the food on the screen"""

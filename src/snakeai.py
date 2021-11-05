@@ -22,7 +22,7 @@ class SnakeAI(Snake):
         self.direction = 0, self.size
         self.current_direction = SnakeDirection.DOWN
 
-    def target(self, dx: float, dy: float):
+    def move_towards(self, dx: float, dy: float):
         """Tells the snake to move towards a given position.
 
         Args:

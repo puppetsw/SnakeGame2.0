@@ -100,7 +100,7 @@ class Game:
 
             self.enemy.update(self.delta_time, None)  # pass None for controls
             self.enemy.draw(self.game_canvas)
-            self.enemy.target(self.food.pos_x, self.food.pos_y)
+            self.enemy.move_towards(self.food.pos_x, self.food.pos_y)
 
             if self.player.eat(self.food):
                 self.food.update_position()

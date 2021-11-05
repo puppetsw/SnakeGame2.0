@@ -25,6 +25,10 @@ class SnakeAI(Snake):
     def move_towards(self, food_x: float, food_y: float):
         """Tells the snake to move towards a given position.
 
+        Todo:
+            Add checks to stop the snake from moving backwards.
+            or onto itself.
+
         Args:
             food_x: The x-coordinate of the target.
             food_y: The y-coordinate of the target.

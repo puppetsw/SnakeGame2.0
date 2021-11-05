@@ -93,6 +93,7 @@ class Game:
 
         if self.game_state == GameState.PLAYING:
             self.game_canvas.fill(BLACK)  # clear the screen
+            self.draw_grid(20, DARK_GRAY)  # draws a grid on the screen
 
             self.food.draw(self.game_canvas)  # draw the food
 
@@ -131,9 +132,15 @@ class Game:
         self.delta_time = self.clock.tick(self.frame_rate) / 1000  # seconds
 
     def draw(self):
-        # Scale up the canvas to the screensize and draw it to the screen.
+        """Scales up the canvas and draws it to the screen."""
         self.screen.blit(pygame.transform.scale(self.game_canvas, (self.display_width, self.display_height)), (0, 0))
         pygame.display.flip()
+
+    def draw_grid(self, grid_size: int, colour: tuple):
+        for x in range(0, self.game_width, grid_size):
+            for y in range(0, self.game_height, grid_size):
+                rect = pygame.Rect(x, y, grid_size, grid_size)
+                pygame.draw.rect(self.game_canvas, colour, rect, 1)
 
     def draw_text(self, surface, text, color, x, y, position='center', font=None):
         if font is None:

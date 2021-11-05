@@ -1,6 +1,3 @@
-"""
-Main Game class
-"""
 import sys
 
 import pygame
@@ -10,11 +7,16 @@ from gamestate import GameState
 from globals import *
 from menu import TitleMenu
 from snake import Snake
+from snakeai import SnakeAI
 
 pygame.init()
 
 
 class Game:
+    """
+    Main class for handling the main loops of the game,
+    game states and menu interactions.
+    """
     def __init__(self, display_width, display_height):
         self.screen = pygame.display.set_mode((display_width, display_height))
         self.display_width = display_width
@@ -39,9 +41,11 @@ class Game:
 
         self.title_menu = TitleMenu(self)
 
-        self.player = Snake(self)
+        self.player = Snake(self, (self.game_width // 2, self.game_height // 2))
         self.player.colour = GREEN
-        self.player.pos_x, self.player.pos_y = self.game_width // 2, self.game_height // 2
+
+        self.enemy = SnakeAI(self, (self.game_width // 2, self.game_height // 3))
+        self.enemy.colour = YELLOW
 
         self.food = Food(self)
 
@@ -96,9 +100,17 @@ class Game:
             self.player.update(self.delta_time, self.controls)
             self.player.draw(self.game_canvas)
 
+            self.enemy.update(self.delta_time, None)  # pass None for controls
+            self.enemy.draw(self.game_canvas)
+            self.enemy.target(self.food.pos_x, self.food.pos_y)
+
             if self.player.eat(self.food):
                 self.food.update_position()
                 self.score += 10  # score increment
+
+            if self.enemy.eat(self.food):
+                self.food.update_position()
+                self.score -= 10
 
             if self.player.is_dead():
                 self.game_state = GameState.GAME_OVER

@@ -32,7 +32,6 @@ class Game:
         self.score = 0
 
         self.running = False
-        self.playing = False
         self.controls = {'left': False, 'right': False, 'up': False, 'down': False, 'action': False, 'back': False}
         self.delta_time = 0
 
@@ -54,7 +53,6 @@ class Game:
         for event in pygame.event.get():
             if event.type == pygame.QUIT:
                 self.running = False
-                self.playing = False
             if event.type == pygame.KEYDOWN:
                 if event.key == pygame.K_LEFT or event.key == pygame.K_a:
                     self.controls['left'] = True
@@ -178,7 +176,7 @@ class Game:
             screen_pos += 20
 
     def game_loop(self):
-        while self.playing:
+        while self.running:
             self.update_delta_time()
             self.get_events()
             self.update()
